@@ -63,14 +63,12 @@ const TicTacToeGame: React.FC = () => {
     );
   };
 
-  const handleLogout = () =>{
-   
-  }
+  const handleLogout = () => {};
   return (
     <>
-      <div className="mx-auto">
+      <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="w-96 mt-2">
-          <FormControl sx={{ m: 1, minWidth: 300 }}>
+          <FormControl sx={{ m: 1, minWidth: 300 }} className="">
             <InputLabel id="demo-simple-select-standard-label">
               Level
             </InputLabel>
@@ -103,8 +101,13 @@ const TicTacToeGame: React.FC = () => {
               : `Next player: ${nextPlayer}`}
           </div>
         </div>
-        <Button variant="outlined" className="ml-5 text-white bg-black hover:bg-gray-800" onClick={handleLogout}>Logout</Button>
-
+        <Button
+          variant="outlined"
+          className="ml-5 text-white bg-black hover:bg-gray-800"
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
       </div>
     </>
   );

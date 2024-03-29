@@ -60,3 +60,55 @@ body {
   margin-top: 10px;
   font-size: 1.5em;
 }
+
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  height: 100vh; 
+  background-color: #272685; 
+}
+
+.animated-text {
+  animation: fadeIn 1s ease-in-out; 
+  font-size: 40px;
+  font-family: cursive;
+  color: black;
+  background-color: rgb(226, 226, 152);
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
+.navbar {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  background-color: rgb(226, 226, 152);
+  padding: 10px;
+}
+
+.links {
+  display: flex;
+  color: black;
+  font-size: 15px;
+}
+
+
+.links > :not(:last-child) {
+  margin-right: 20px;
+}
+
+.title {
+  color: #e9e2e2; 
+  font-size: 24px;
+}
