@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
+
 
 interface FormData {
   email: string;
@@ -12,6 +14,8 @@ const Login: React.FC = () => {
     email: "",
     password: "",
   });
+
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,13 +38,15 @@ const Login: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        router.push('/Game')
+
       } else {
         console.error("Login failed");
       }
     } catch (error) {
       console.error("Error:", error);
     }
+   
     setFormData({
       email: "",
       password: "",

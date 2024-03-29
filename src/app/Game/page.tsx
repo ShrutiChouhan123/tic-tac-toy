@@ -5,7 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { Button } from "@mui/material";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type Player = "X" | "O" | null;
 
@@ -15,6 +15,7 @@ const TicTacToeGame: React.FC = () => {
   const [winner, setWinner] = useState<Player | null>(null);
 
   const [level, setLevel] = useState<string>("");
+  const router = useRouter()
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     setLevel(event.target.value);
@@ -63,7 +64,22 @@ const TicTacToeGame: React.FC = () => {
     );
   };
 
-  const handleLogout = () => {};
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/logout", {
+        method: "POST",
+      });
+  
+      if (response.ok) {
+        router.push("/Login"); 
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  
   return (
     <>
       <div className="flex flex-col items-center justify-center min-h-screen">
