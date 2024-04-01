@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 const Home = () => {
-  return (
+      return (
     <>
       <div className="navbar">
         <div className="links">

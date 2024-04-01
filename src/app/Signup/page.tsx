@@ -34,7 +34,7 @@ const Signup: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+                console.log(data);
       } else {
         console.error("Login failed");
       }

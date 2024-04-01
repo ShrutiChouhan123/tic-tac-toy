@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -15,7 +15,7 @@ const TicTacToeGame: React.FC = () => {
   const [winner, setWinner] = useState<Player | null>(null);
 
   const [level, setLevel] = useState<string>("");
-  const router = useRouter()
+  const router = useRouter();
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     setLevel(event.target.value);
@@ -64,67 +64,76 @@ const TicTacToeGame: React.FC = () => {
     );
   };
 
+
   const handleLogout = async () => {
     try {
       const response = await fetch("http://localhost:3000/logout", {
         method: "POST",
       });
-  
+
       if (response.ok) {
-        router.push("/Login"); 
+        localStorage.removeItem("token");
+        router.push("/Login");
       } else {
         console.error("Logout failed");
       }
     } catch (error) {
       console.error("Error:", error);
     }
+
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+      }
+    }, []);
   };
-  
+
   return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="w-96 mt-2">
-          <FormControl sx={{ m: 1, minWidth: 300 }} className="">
-            <InputLabel id="demo-simple-select-standard-label">
-              Level
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-standard-label"
-              id="demo-simple-select-standard"
-              value={level}
-              onChange={handleChange}
-              label="Age"
-            >
-              <MenuItem value={10}>Easy</MenuItem>
-              <MenuItem value={20}>Medium</MenuItem>
-              <MenuItem value={30}>Difficulty</MenuItem>
-            </Select>
-          </FormControl>
-        </div>
-        <div className="game mt-20">
-          <div className="board">
-            {board.map((_, index) => (
-              <div key={index} className="cell-container">
-                {renderCell(index)}
-              </div>
-            ))}
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <div className="w-96 mt-2">
+            <FormControl sx={{ m: 1, minWidth: 300 }} className="">
+              <InputLabel id="demo-simple-select-standard-label">
+                Level
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-standard-label"
+                id="demo-simple-select-standard"
+                value={level}
+                onChange={handleChange}
+                label="Age"
+              >
+                <MenuItem value={10}>Easy</MenuItem>
+                <MenuItem value={20}>Medium</MenuItem>
+                <MenuItem value={30}>Difficulty</MenuItem>
+              </Select>
+            </FormControl>
           </div>
-          <div className="status">
-            {winner
-              ? winner === "Draw"
-                ? "Lose The Game"
-                : `Winner: ${winner}`
-              : `Next player: ${nextPlayer}`}
+          <div className="game mt-20">
+            <div className="board">
+              {board.map((_, index) => (
+                <div key={index} className="cell-container">
+                  {renderCell(index)}
+                </div>
+              ))}
+            </div>
+            <div className="status">
+              {winner
+                ? winner === "Draw"
+                  ? "Lose The Game"
+                  : `Winner: ${winner}`
+                : `Next player: ${nextPlayer}`}
+            </div>
           </div>
+          <Button
+            variant="outlined"
+            className="ml-5 text-white bg-black hover:bg-gray-800"
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
         </div>
-        <Button
-          variant="outlined"
-          className="ml-5 text-white bg-black hover:bg-gray-800"
-          onClick={handleLogout}
-        >
-          Logout
-        </Button>
-      </div>
     </>
   );
 };

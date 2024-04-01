@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 
@@ -25,6 +25,8 @@ const Login: React.FC = () => {
     }));
   };
 
+  const accessToken = localStorage.getItem('token');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -38,7 +40,8 @@ const Login: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        router.push('/Game')
+        localStorage.setItem('token',data.token)
+        router.push('/game')
 
       } else {
         console.error("Login failed");
@@ -51,6 +54,27 @@ const Login: React.FC = () => {
       email: "",
       password: "",
     });
+
+    useEffect(() => {
+      const storedToken = localStorage.getItem('token');
+      console.log(storedToken)
+      if (storedToken !== accessToken) {
+        console.error('Invalid token');
+      } 
+      else {
+        fetch("http://localhost:3000/game", {
+          method: "GET",
+          headers: {
+            Authorization: `Token ${accessToken}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error("Error:", error));
+      }
+    }, []);
+
+    
   };
 
   return (
