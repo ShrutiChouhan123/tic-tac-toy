@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
-
 const Home = () => {
-      return (
+  return (
     <>
       <div className="navbar">
         <div className="links">
           <Link href="/Signup">Signup</Link>
           <Link href="/Login">Login</Link>
+          <Link href="/game">Game</Link>
         </div>
       </div>
       <div className="container">

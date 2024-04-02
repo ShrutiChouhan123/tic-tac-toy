@@ -1,38 +1,75 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { Button } from "@mui/material";
+import React, { useState, useEffect,useLayoutEffect } from "react";
+import axios from "axios";
+import { sessionStatus } from "../utils/session";
+import { redirect } from "next/navigation";
+import withAuth from '../components/Protected'
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 
-type Player = "X" | "O" | null;
+const TicTacToeGame = () => {
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [nextPlayer, setNextPlayer] = useState("X");
+  const [winner, setWinner] = useState(null);
+  const [level, setLevel] = useState("");
 
-const TicTacToeGame: React.FC = () => {
-  const [board, setBoard] = useState<Player[]>(Array(9).fill(null));
-  const [nextPlayer, setNextPlayer] = useState<Player>("X");
-  const [winner, setWinner] = useState<Player | null>(null);
+  useEffect(() => {
+    getGame()
+    startNewGame();
+  }, []);
 
-  const [level, setLevel] = useState<string>("");
-  const router = useRouter();
-
-  const handleChange = (event: SelectChangeEvent<string>) => {
-    setLevel(event.target.value);
+ 
+  const getGame = () => {
+    const token = localStorage.getItem("token");
+    try {
+       axios.get("http://localhost:3000/user/game", {
+        headers: {
+          "authorization": token,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleClick = (index: number) => {
-    if (board[index] === null && !winner) {
+  const startNewGame = async () => {
+    try {
+      await axios.post("http://localhost:3000/user/start-game");
+      setBoard(Array(9).fill(null));
+      setNextPlayer("X");
+      setWinner(null);
+    } catch (error) {
+      console.error("Error");
+    }
+  };
+
+  const makeMove = async (index) => {
+    try {
+      if (winner || board[index] !== null) return;
+
+      await axios.post("http://localhost:3000/user/make-move", { index });
+
       const newBoard = [...board];
       newBoard[index] = nextPlayer;
       setBoard(newBoard);
       setNextPlayer(nextPlayer === "X" ? "O" : "X");
-      checkWinner(newBoard);
+      const winningPlayer = checkWinner(newBoard);
+      if (winningPlayer) {
+        setWinner(winningPlayer);
+      }
+    } catch (error) {
+      console.error("Error");
     }
   };
 
-  const checkWinner = (board: Player[]) => {
-    const winningCombos: number[][] = [
+  const checkWinner = (board) => {
+    const winningCombos = [
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8],
@@ -46,28 +83,38 @@ const TicTacToeGame: React.FC = () => {
     for (const combo of winningCombos) {
       const [a, b, c] = combo;
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        setWinner(board[a]);
-        return;
+        return board[a];
       }
     }
 
     if (board.every((cell) => cell !== null)) {
-      setWinner("Draw");
+      return "Draw";
     }
+
+    return null;
   };
 
-  const renderCell = (index: number) => {
+  const handleLevelChange = (event) => {
+    setLevel(event.target.value);
+  };
+
+  const handleCellClick = (index) => {
+    makeMove(index);
+  };
+
+  const renderCell = (index) => {
     return (
-      <button className="cell" onClick={() => handleClick(index)}>
+      <button className="cell" onClick={() => handleCellClick(index)}>
         {board[index]}
       </button>
     );
   };
 
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:3000/logout", {
+      const response = await fetch("http://localhost:3000/user/logout", {
         method: "POST",
       });
 
@@ -80,62 +127,57 @@ const TicTacToeGame: React.FC = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-
-    useEffect(() => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.push('/login');
-      }
-    }, []);
   };
 
   return (
-    <>
-        <div className="flex flex-col items-center justify-center min-h-screen">
-          <div className="w-96 mt-2">
-            <FormControl sx={{ m: 1, minWidth: 300 }} className="">
-              <InputLabel id="demo-simple-select-standard-label">
-                Level
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-standard-label"
-                id="demo-simple-select-standard"
-                value={level}
-                onChange={handleChange}
-                label="Age"
-              >
-                <MenuItem value={10}>Easy</MenuItem>
-                <MenuItem value={20}>Medium</MenuItem>
-                <MenuItem value={30}>Difficulty</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-          <div className="game mt-20">
-            <div className="board">
-              {board.map((_, index) => (
-                <div key={index} className="cell-container">
-                  {renderCell(index)}
-                </div>
-              ))}
-            </div>
-            <div className="status">
-              {winner
-                ? winner === "Draw"
-                  ? "Lose The Game"
-                  : `Winner: ${winner}`
-                : `Next player: ${nextPlayer}`}
-            </div>
-          </div>
-          <Button
-            variant="outlined"
-            className="ml-5 text-white bg-black hover:bg-gray-800"
-            onClick={handleLogout}
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="w-96 mt-2">
+        <FormControl sx={{ m: 1, minWidth: 300 }}>
+          <InputLabel id="level-label">Level</InputLabel>
+          <Select
+            labelId="level-label"
+            id="level-select"
+            value={level}
+            onChange={handleLevelChange}
           >
-            Logout
-          </Button>
+            <MenuItem value={"Easy"}>Easy</MenuItem>
+            <MenuItem value={"Medium"}>Medium</MenuItem>
+            <MenuItem value={"Difficulty"}>Difficulty</MenuItem>
+          </Select>
+        </FormControl>
+      </div>
+      <div className="game mt-20">
+        <div className="board">
+          {board.map((_, index) => (
+            <div key={index} className="cell-container">
+              {renderCell(index)}
+            </div>
+          ))}
         </div>
-    </>
+        <div className="status">
+          {winner
+            ? winner === "Draw"
+              ? "Lose The Game"
+              : `Winner: ${winner}`
+            : `Next player: ${nextPlayer}`}
+        </div>
+      </div>
+      <Button
+        variant="outlined"
+        className="mt-5 text-white bg-black hover:bg-gray-800"
+        onClick={startNewGame}
+      >
+        New Game
+      </Button>
+      <Button
+        variant="outlined"
+        className="mt-3 text-white bg-black hover:bg-gray-800"
+        onClick={handleLogout}
+      >
+        Logout
+      </Button>
+    </div>
   );
 };
 
-export default TicTacToeGame;
+export default TicTacToeGame

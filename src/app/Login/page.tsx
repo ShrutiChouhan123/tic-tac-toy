@@ -1,8 +1,8 @@
 "use client";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
-
+import { redirect, useRouter } from "next/navigation";
+import { sessionStatus } from "../utils/session";
 
 interface FormData {
   email: string;
@@ -15,8 +15,14 @@ const Login: React.FC = () => {
     password: "",
   });
 
+  let session = sessionStatus;
   const router = useRouter();
 
+  // useEffect(()=>{
+  //   if(!session){
+  //     redirect('/')
+  //   }
+  // })
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -25,12 +31,11 @@ const Login: React.FC = () => {
     }));
   };
 
-  const accessToken = localStorage.getItem('token');
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    session = true
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch("http://localhost:3000/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,41 +45,20 @@ const Login: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem('token',data.token)
-        router.push('/game')
-
-      } else {
+        localStorage.setItem("token", data.token);
+        router.push("/game");
+      }
+      else {
         console.error("Login failed");
       }
     } catch (error) {
       console.error("Error:", error);
     }
-   
+
     setFormData({
       email: "",
       password: "",
     });
-
-    useEffect(() => {
-      const storedToken = localStorage.getItem('token');
-      console.log(storedToken)
-      if (storedToken !== accessToken) {
-        console.error('Invalid token');
-      } 
-      else {
-        fetch("http://localhost:3000/game", {
-          method: "GET",
-          headers: {
-            Authorization: `Token ${accessToken}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => console.log(data))
-          .catch((error) => console.error("Error:", error));
-      }
-    }, []);
-
-    
   };
 
   return (
