@@ -1,7 +1,6 @@
 "use client";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 interface FormData {
   email: string;
@@ -13,7 +12,6 @@ const Signup: React.FC = () => {
     email: "",
     password: "",
   });
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -53,17 +51,17 @@ const Signup: React.FC = () => {
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 mx-auto">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
           Create an account
         </h2>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm border border-dashed border-gradient-blue-to-purple p-2 rounded-lg">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium leading-6 text-gray-900"
+              className="block text-sm font-medium leading-6 text-white"
             >
               Email address
             </label>
@@ -76,7 +74,7 @@ const Signup: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full h-12 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
           </div>
@@ -85,7 +83,7 @@ const Signup: React.FC = () => {
             <div className="flex items-center justify-between">
               <label
                 htmlFor="password"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-white"
               >
                 Password
               </label>
@@ -99,13 +97,13 @@ const Signup: React.FC = () => {
                 onChange={handleChange}
                 autoComplete="current-password"
                 required
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full h-12 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div className="text-sm">
               <Link
                 href="/Login"
-                className="font-semibold text-indigo-600 hover:text-indigo-500"
+                className="font-semibold text-white hover:text-indigo-500 "
               >
                 Login an account
               </Link>
@@ -115,7 +113,7 @@ const Signup: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="flex w-full justify-center rounded-md bg-yellow-200 px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Sign up
             </button>

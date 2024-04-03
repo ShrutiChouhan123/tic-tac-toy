@@ -88,6 +88,9 @@ body {
   }
 }
 
+.body-design{
+  background-color: #272685;
+}
 
 .navbar {
   display: flex;

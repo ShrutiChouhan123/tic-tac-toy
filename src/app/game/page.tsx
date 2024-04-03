@@ -1,9 +1,6 @@
 "use client";
-import React, { useState, useEffect,useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import axios from "axios";
-import { sessionStatus } from "../utils/session";
-import { redirect } from "next/navigation";
-import withAuth from '../components/Protected'
 import {
   Button,
   FormControl,
@@ -20,17 +17,21 @@ const TicTacToeGame = () => {
   const [level, setLevel] = useState("");
 
   useEffect(() => {
-    getGame()
-    startNewGame();
+    const sessionStatus = localStorage.getItem("sessionStatus");
+    if (sessionStatus == "true") {
+      router.push("/game");
+      startNewGame();
+    } else {
+      router.push("/");
+    }
   }, []);
 
- 
   const getGame = () => {
     const token = localStorage.getItem("token");
     try {
-       axios.get("http://localhost:3000/user/game", {
+      axios.get("http://localhost:3000/user/game", {
         headers: {
-          "authorization": token,
+          authorization: token,
         },
       });
     } catch (error) {
@@ -120,6 +121,7 @@ const TicTacToeGame = () => {
 
       if (response.ok) {
         localStorage.removeItem("token");
+        localStorage.setItem("sessionStatus", "false");
         router.push("/Login");
       } else {
         console.error("Logout failed");
@@ -130,14 +132,17 @@ const TicTacToeGame = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className="w-96 mt-2">
-        <FormControl sx={{ m: 1, minWidth: 300 }}>
-          <InputLabel id="level-label">Level</InputLabel>
+    <div className="flex flex-col items-center justify-center min-h-screen border-white-300">
+      <div className="w mt-2">
+        <FormControl sx={{ m: 1, minWidth: 300, border: "1px solid white" }}>
+          <InputLabel id="level-label" className="text-white">
+            Level
+          </InputLabel>
           <Select
             labelId="level-label"
             id="level-select"
             value={level}
+            className="text-white"
             onChange={handleLevelChange}
           >
             <MenuItem value={"Easy"}>Easy</MenuItem>
@@ -154,7 +159,7 @@ const TicTacToeGame = () => {
             </div>
           ))}
         </div>
-        <div className="status">
+        <div className="status text-white">
           {winner
             ? winner === "Draw"
               ? "Lose The Game"
@@ -164,14 +169,14 @@ const TicTacToeGame = () => {
       </div>
       <Button
         variant="outlined"
-        className="mt-5 text-white bg-black hover:bg-gray-800"
+        className="mt-5 bg-white hover:bg-gray-800 text-black hover:text-white"
         onClick={startNewGame}
       >
         New Game
       </Button>
       <Button
         variant="outlined"
-        className="mt-3 text-white bg-black hover:bg-gray-800"
+        className="mt-5 bg-white hover:bg-gray-800 text-black hover:text-white"
         onClick={handleLogout}
       >
         Logout
@@ -180,4 +185,4 @@ const TicTacToeGame = () => {
   );
 };
 
-export default TicTacToeGame
+export default TicTacToeGame;

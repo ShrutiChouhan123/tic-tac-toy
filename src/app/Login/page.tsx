@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { sessionStatus } from "../utils/session";
 
 interface FormData {
@@ -17,12 +17,6 @@ const Login: React.FC = () => {
 
   let session = sessionStatus;
   const router = useRouter();
-
-  // useEffect(()=>{
-  //   if(!session){
-  //     redirect('/')
-  //   }
-  // })
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -33,7 +27,7 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    session = true
+    session = true;
     try {
       const response = await fetch("http://localhost:3000/user/login", {
         method: "POST",
@@ -46,9 +40,9 @@ const Login: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.token);
+        localStorage.setItem("sessionStatus", "true");
         router.push("/game");
-      }
-      else {
+      } else {
         console.error("Login failed");
       }
     } catch (error) {
@@ -64,17 +58,17 @@ const Login: React.FC = () => {
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 mx-auto">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Login
+        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 text-white">
+          Login Account
         </h2>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm border border-dashed border-gradient-blue-to-purple p-2 rounded-lg">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium leading-6 text-gray-900"
+              className="block text-sm font-medium leading-6 text-white"
             >
               Email address
             </label>
@@ -87,7 +81,7 @@ const Login: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full h-12 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
           </div>
@@ -96,7 +90,7 @@ const Login: React.FC = () => {
             <div className="flex items-center justify-between">
               <label
                 htmlFor="password"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-white"
               >
                 Password
               </label>
@@ -110,13 +104,13 @@ const Login: React.FC = () => {
                 onChange={handleChange}
                 autoComplete="current-password"
                 required
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full h-12 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div className="text-sm">
               <Link
                 href="/Signup"
-                className="font-semibold text-indigo-600 hover:text-indigo-500"
+                className="font-semibold text-indigo-600 hover:text-indigo-500 text-white"
               >
                 Create an account
               </Link>
@@ -126,7 +120,7 @@ const Login: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="flex w-full justify-center rounded-md bg-yellow-200 text-black px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Sign in
             </button>
