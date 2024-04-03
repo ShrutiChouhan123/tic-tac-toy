@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Button,
@@ -17,27 +17,33 @@ const TicTacToeGame = () => {
   const [level, setLevel] = useState("");
 
   useEffect(() => {
-    const sessionStatus = localStorage.getItem("sessionStatus");
-    if (sessionStatus == "true") {
-      router.push("/game");
-      startNewGame();
-    } else {
-      router.push("/");
-    }
+    getGame();
   }, []);
 
-  const getGame = () => {
+  async function getGame() {
     const token = localStorage.getItem("token");
+    if (!token) {
+      router.push('/');
+      return;
+  }
+    const headers = {
+      Authorization: `auth ${token}`,
+    };
     try {
-      axios.get("http://localhost:3000/user/game", {
-        headers: {
-          authorization: token,
-        },
+      const response = await axios.get("http://localhost:3000/user/game", {
+        headers,
       });
+      console.log(response.headers.authorization);
+      if (response.status === 200) {
+        router.push("/user/game");
+      } else {
+        localStorage.removeItem("token");
+        router.push('/'); 
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error:", error);
     }
-  };
+  }
 
   const startNewGame = async () => {
     try {
@@ -115,14 +121,14 @@ const TicTacToeGame = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:3000/user/logout", {
+      const response = await fetch("http://localhost:3000/auth/logout", {
         method: "POST",
       });
 
       if (response.ok) {
         localStorage.removeItem("token");
         localStorage.setItem("sessionStatus", "false");
-        router.push("/Login");
+        router.push("/");
       } else {
         console.error("Logout failed");
       }

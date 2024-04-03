@@ -7,7 +7,7 @@ const Home = () => {
         <div className="links">
           <Link href="/Signup">Signup</Link>
           <Link href="/Login">Login</Link>
-          <Link href="/game">Game</Link>
+          <Link href="/user/game">Game</Link>
         </div>
       </div>
       <div className="container">

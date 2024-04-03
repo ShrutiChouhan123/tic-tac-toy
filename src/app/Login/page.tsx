@@ -29,7 +29,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     session = true;
     try {
-      const response = await fetch("http://localhost:3000/user/login", {
+      const response = await fetch("http://localhost:3000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ const Login: React.FC = () => {
         const data = await response.json();
         localStorage.setItem("token", data.token);
         localStorage.setItem("sessionStatus", "true");
-        router.push("/game");
+         router.push('user/game')
       } else {
         console.error("Login failed");
       }

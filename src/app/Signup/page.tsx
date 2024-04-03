@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 
 interface FormData {
@@ -24,7 +24,7 @@ const Signup: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/user/signup", {
+      const response = await fetch("http://localhost:3000/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,8 +34,7 @@ const Signup: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        // localStorage.setItem('token',data.token)
-        console.log(data);
+        localStorage.setItem('token',data.token)
       } else {
         console.error("Login failed");
       }
